@@ -3,9 +3,16 @@ services:
     name: loveedit-studio
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: rm -rf app/static/uploads && mkdir -p /data/uploads && ln -sfn /data/uploads app/static/uploads && gunicorn app:app
+    disk:
+      name: loveedit-data
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.12
       - key: FLASK_ENV
         value: production
+      - key: DB_NAME
+        value: /data/loveedit.db
+
