@@ -1,0 +1,955 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Console - LoveEdit Studio{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<style>
+    /* Admin Dashboard Specific Premium Styling */
+    .admin-dashboard-wrapper {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        padding: 7rem 2rem 4rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        min-height: 90vh;
+    }
+
+    /* Sidebar Navigation */
+    .admin-sidebar {
+        height: fit-content;
+        position: sticky;
+        top: 6rem;
+    }
+
+    .admin-sidebar-title {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .admin-sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .admin-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.25rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: 1px solid transparent;
+    }
+
+    .admin-nav-link:hover, .admin-nav-link:focus {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-nav-link.active {
+        color: var(--text-light);
+        background: rgba(212, 175, 55, 0.1);
+        border-color: rgba(212, 175, 55, 0.3);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.05);
+        font-weight: 600;
+    }
+
+    .admin-nav-link i {
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .admin-nav-link.active i {
+        color: var(--gold-primary);
+        transform: scale(1.1);
+    }
+
+    /* Tab Panels Container */
+    .admin-content-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .admin-tab-panel {
+        display: none;
+        animation: fadeIn 0.4s ease forwards;
+    }
+
+    .admin-tab-panel.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI Dashboard Cards */
+    .admin-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .admin-kpi-card {
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-kpi-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        opacity: 0.3;
+    }
+
+    .admin-kpi-val {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* Analytics Chart Grid */
+    .admin-chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .admin-chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    /* Badges */
+    .plan-badge {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        letter-spacing: 1px;
+    }
+
+    .plan-badge.basic {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .plan-badge.gold {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--gold-glow);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .plan-badge.pro {
+        background: rgba(0, 255, 255, 0.1);
+        color: #00ffff;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+
+    .ticket-status-badge {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    .ticket-status-badge.open {
+        background: rgba(255, 90, 90, 0.1);
+        color: #ff5a5a;
+        border: 1px solid rgba(255, 90, 90, 0.3);
+    }
+
+    .ticket-status-badge.resolved {
+        background: rgba(90, 255, 90, 0.1);
+        color: #5aff5a;
+        border: 1px solid rgba(90, 255, 90, 0.3);
+    }
+
+    /* Filters & Search Bars */
+    .admin-filter-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-search-input {
+        flex: 1;
+        min-width: 250px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        color: #fff;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .admin-search-input:focus {
+        border-color: var(--gold-primary);
+    }
+
+    .admin-select-filter {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 0.75rem 1.5rem;
+        color: #fff;
+        font-family: inherit;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .admin-select-filter:focus {
+        border-color: var(--gold-primary);
+    }
+
+    /* Quick Action Dropdowns in Tables */
+    .admin-action-selects {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .admin-plan-select, .admin-status-select {
+        background: rgba(25, 22, 18, 0.6);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        color: #fff;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .admin-plan-select:focus, .admin-status-select:focus {
+        border-color: var(--gold-primary);
+    }
+
+    /* Live Diagnostic Rows */
+    .diagnostic-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .diag-card {
+        padding: 1.25rem;
+        border-left: 3px solid var(--gold-primary);
+    }
+
+    .diag-card.threads {
+        border-left-color: #00ffff;
+    }
+
+    .diag-card.db {
+        border-left-color: #9c27b0;
+    }
+
+    /* Modal for Ticket Replies */
+    .admin-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .admin-modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .admin-modal-card {
+        background: #14130f;
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .admin-modal-overlay.active .admin-modal-card {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+        color: #fff;
+    }
+
+    /* Toast Notification CSS */
+    .admin-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #181612;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 9999;
+        font-weight: 500;
+    }
+
+    .admin-toast.visible {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .admin-toast.success i {
+        color: #5aff5a;
+    }
+
+    .admin-toast.error {
+        border-color: rgba(255, 90, 90, 0.4);
+    }
+
+    .admin-toast.error i {
+        color: #ff5a5a;
+    }
+
+    /* Mobile Responsive Sidebar */
+    @media (max-width: 768px) {
+        .admin-dashboard-wrapper {
+            grid-template-columns: 1fr;
+            padding-top: 6rem;
+        }
+
+        .admin-sidebar {
+            position: relative;
+            top: 0;
+        }
+
+        .admin-sidebar-nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<div class="admin-dashboard-wrapper">
+
+    <!-- Dashboard Sidebar Navigation -->
+    <aside class="admin-sidebar glass-panel" style="padding: 1.5rem;">
+        <h4 class="admin-sidebar-title"><i class="fas fa-sliders-h"></i> Admin Suite</h4>
+        <nav class="admin-sidebar-nav">
+            <a href="#" class="admin-nav-link active" data-tab="overview"><i class="fas fa-chart-line"></i> Overview</a>
+            <a href="#" class="admin-nav-link" data-tab="analytics"><i class="fas fa-chart-pie"></i> Advanced Analytics</a>
+            <a href="#" class="admin-nav-link" data-tab="users"><i class="fas fa-users-cog"></i> User Accounts</a>
+            <a href="#" class="admin-nav-link" data-tab="billing"><i class="fas fa-credit-card"></i> Revenue Analytics</a>
+            <a href="#" class="admin-nav-link" data-tab="tickets"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="#" class="admin-nav-link" data-tab="monitor"><i class="fas fa-microchip"></i> System Monitor</a>
+            <a href="#" class="admin-nav-link" data-tab="logs"><i class="fas fa-list-ul"></i> Audit Activity Logs</a>
+            <a href="#" class="admin-nav-link" data-tab="mail"><i class="fas fa-envelope"></i> Mock Mail Logs</a>
+        </nav>
+    </aside>
+
+    <!-- Main Dashboard Content Panels -->
+    <main class="admin-content-panel">
+
+        <!-- 1. OVERVIEW TAB PANEL -->
+        <section class="admin-tab-panel active" id="tab-overview">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-chart-bar"></i> Analytics Console</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Operations <span class="text-gold">Overview</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Business metrics, style preferences, and live database logs.</p>
+            </div>
+
+            <!-- KPI Cards Row -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-dollar-sign"></i> MRR (30 Days)</span>
+                    <div class="admin-kpi-val text-gold" id="stat-mrr">${{ mrr }}</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-users"></i> Total Subscribers</span>
+                    <div class="admin-kpi-val text-gold" id="stat-users">{{ total_users }}</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-magic"></i> Generated Art</span>
+                    <div class="admin-kpi-val text-gold" id="stat-projects">{{ total_projects }}</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-download"></i> Total Exports</span>
+                    <div class="admin-kpi-val text-gold" id="stat-downloads">{{ total_downloads }}</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-envelope-open-text"></i> Open Tickets</span>
+                    <div class="admin-kpi-val text-gold" id="stat-tickets">{{ open_tickets }}</div>
+                </div>
+            </div>
+
+            <!-- Dynamic Graphs Row 1 -->
+            <div class="admin-chart-grid">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-line text-gold"></i> Monthly Recurring Revenue ($)</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-revenue"></canvas>
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-pie text-gold"></i> Popular Portrait Styles</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-styles"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Graphs Row 2 -->
+            <div class="admin-chart-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-bar text-gold"></i> Image Generation Scaling (Past 7 Days)</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-generations"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1.5 ADVANCED ANALYTICS TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-analytics">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-chart-area"></i> Advanced Analytics</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Operations <span class="text-gold">Analytics</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Detailed performance charts, user conversion trends, generation metrics, and engagement tracing.</p>
+            </div>
+
+            <!-- Analytics KPI Grid -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-hand-holding-usd"></i> Lifetime Revenue</span>
+                    <div class="admin-kpi-val text-gold" id="analytics-stat-lifetime">$0.00</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-users-cog"></i> Active Users (DAU/MAU)</span>
+                    <div class="admin-kpi-val text-gold"><span id="analytics-stat-dau">0</span> / <span id="analytics-stat-mau">0</span></div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-percentage"></i> Conversion Rate</span>
+                    <div class="admin-kpi-val text-gold" id="analytics-stat-conversion">0.0%</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-hourglass-half"></i> Avg Ticket Resolution</span>
+                    <div class="admin-kpi-val text-gold" id="analytics-stat-resolution">0.0h</div>
+                </div>
+                <div class="admin-kpi-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;"><i class="fas fa-chart-bar"></i> Avg. Gens / User</span>
+                    <div class="admin-kpi-val text-gold" id="analytics-stat-generations">0.0</div>
+                </div>
+            </div>
+
+            <!-- Analytics Charts Grid 1 -->
+            <div class="admin-chart-grid">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-line text-gold"></i> Cumulative Revenue Growth ($)</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-analytics-revenue"></canvas>
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-pie text-gold"></i> Subscription Plan Distribution</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-analytics-conversion"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Charts Grid 2 -->
+            <div class="admin-chart-grid">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-tasks text-gold"></i> Image Generation Success Rates</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-analytics-generations-status"></canvas>
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-download text-gold"></i> Export Resolution Breakdown</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-analytics-exports"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Charts Grid 3 (One-Column) -->
+            <div class="admin-chart-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h4 style="font-family: var(--font-display); color: #fff;"><i class="fas fa-chart-area text-gold"></i> Daily Operations Activity Hits (Past 7 Days)</h4>
+                    <div class="chart-container">
+                        <canvas id="chart-analytics-engagement"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. USER MANAGEMENT TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-users">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-user-cog"></i> Account Control</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">User <span class="text-gold">Directory</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Adjust subscriber tiers, manage plan overrides, or purge user credentials.</p>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="admin-filter-bar">
+                <input type="text" placeholder="Search by Username..." class="admin-search-input" id="user-search-input">
+                <select class="admin-select-filter" id="user-plan-filter">
+                    <option value="all">All Plans</option>
+                    <option value="Basic">Basic Plan</option>
+                    <option value="Gold">Gold Plan</option>
+                    <option value="Pro">Pro Plan</option>
+                </select>
+            </div>
+
+            <!-- Users Table -->
+            <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                {% if users %}
+                    <table class="download-history-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Billing Tier</th>
+                                <th>Status</th>
+                                <th>Renews Date</th>
+                                <th>Registered</th>
+                                <th>Actions Control</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr class="admin-user-row" data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-plan="{{ user.subscription_plan }}">
+                                    <td>#{{ user.id }}</td>
+                                    <td><strong style="color: var(--text-light)">{{ user.username }}</strong></td>
+                                    <td>
+                                        <span class="plan-badge {{ user.subscription_plan|lower if user.subscription_plan else 'basic' }}">
+                                            {{ user.subscription_plan if user.subscription_plan else 'Basic' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="ticket-status-badge {{ user.subscription_status|lower if user.subscription_status else 'active' }}">
+                                            {{ user.subscription_status if user.subscription_status else 'Active' }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 0.85rem;">{{ user.subscription_renews if user.subscription_renews else 'N/A' }}</td>
+                                    <td style="font-size: 0.85rem;">{{ user.created_at }}</td>
+                                    <td>
+                                        <div class="admin-action-selects">
+                                            <select class="admin-plan-select" aria-label="Change Plan">
+                                                <option value="Basic" {% if user.subscription_plan == 'Basic' or not user.subscription_plan %}selected{% endif %}>Basic</option>
+                                                <option value="Gold" {% if user.subscription_plan == 'Gold' %}selected{% endif %}>Gold</option>
+                                                <option value="Pro" {% if user.subscription_plan == 'Pro' %}selected{% endif %}>Pro</option>
+                                            </select>
+                                            <select class="admin-status-select" aria-label="Change Status">
+                                                <option value="Active" {% if user.subscription_status == 'Active' or not user.subscription_status %}selected{% endif %}>Active</option>
+                                                <option value="Cancelled" {% if user.subscription_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                            </select>
+                                            <button class="btn-icon btn-admin-delete-user" title="Delete User" style="color: #ff5a5a; border-color: rgba(255, 90, 90, 0.2);" aria-label="Delete User">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="premium-empty-state" style="border: none; background: transparent; padding: 3rem 1.5rem; margin: 0 auto;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-users" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>No Registered Users</h4>
+                        <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto;">There are currently no customer profile records registered in the system database.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 3. REVENUE ANALYTICS TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-billing">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-file-invoice-dollar"></i> Business Ledger</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Transaction <span class="text-gold">Logs</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Comprehensive list of processed payments, invoices, and sales history.</p>
+            </div>
+
+            <!-- Transaction list -->
+            <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                {% if transactions %}
+                    <table class="download-history-table">
+                        <thead>
+                            <tr>
+                                <th>Tx ID</th>
+                                <th>Subscriber</th>
+                                <th>Plan Tier</th>
+                                <th>Amount Charged</th>
+                                <th>Billing Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                                <tr>
+                                    <td>#{{ tx.id }}</td>
+                                    <td><strong style="color: var(--text-light)">{{ tx.username }}</strong></td>
+                                    <td>
+                                        <span class="plan-badge {{ tx.plan_tier|lower }}">
+                                            {{ tx.plan_tier }}
+                                        </span>
+                                    </td>
+                                    <td class="text-gold" style="font-weight: 600;">${{ "%.2f"|format(tx.amount) }}</td>
+                                    <td>{{ tx.billing_date }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="premium-empty-state" style="border: none; background: transparent; padding: 3rem 1.5rem; margin: 0 auto;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-file-invoice-dollar" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>No Transaction Invoices</h4>
+                        <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto;">No billing logs or subscription checkout invoices have been recorded in the database yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 4. SUPPORT TICKET MANAGEMENT TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-tickets">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-headset"></i> Support Desk</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Ticket <span class="text-gold">Inbox</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Respond to user questions, billing queries, and layout feedback.</p>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                {% if tickets %}
+                    <table class="download-history-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Sender</th>
+                                <th>Email Address</th>
+                                <th>Subject Query</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Reply Center</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ticket in tickets %}
+                                <tr class="ticket-row" data-ticket-id="{{ ticket.id }}">
+                                    <td>#{{ ticket.id }}</td>
+                                    <td><strong style="color: var(--text-light)">{{ ticket.name }}</strong></td>
+                                    <td style="font-size: 0.85rem;">{{ ticket.email }}</td>
+                                    <td>{{ ticket.subject }}</td>
+                                    <td>
+                                        <span class="ticket-status-badge {{ ticket.status|lower }}">
+                                            {{ ticket.status }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 0.85rem;">{{ ticket.created_at }}</td>
+                                    <td>
+                                        <button class="btn-premium btn-admin-reply-ticket" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" 
+                                                data-id="{{ ticket.id }}" 
+                                                data-name="{{ ticket.name }}" 
+                                                data-email="{{ ticket.email }}" 
+                                                data-subject="{{ ticket.subject }}" 
+                                                data-message="{{ ticket.message }}"
+                                                data-reply="{{ ticket.reply if ticket.reply else '' }}"
+                                                data-status="{{ ticket.status }}">
+                                            <i class="fas fa-reply"></i> Open &amp; Reply
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="premium-empty-state" style="border: none; background: transparent; padding: 3rem 1.5rem; margin: 0 auto;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-envelope-open" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>Support Inbox Clear</h4>
+                        <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto;">All caught up! There are currently no customer support messages or unresolved feedback tickets.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 5. SYSTEM RESOURCE MONITOR TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-monitor">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-server"></i> System Diagnostics</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Infrastructure <span class="text-gold">Health</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Real-time server workloads, thread logs, database allocations, and database vacuum maintenance.</p>
+            </div>
+
+            <!-- Diagnostics Metrics -->
+            <div class="diagnostic-grid">
+                <div class="diag-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">CPU LOAD</span>
+                    <h3 id="diag-cpu" style="font-size: 1.8rem; margin-top: 0.25rem;">0.0%</h3>
+                </div>
+                <div class="diag-card glass-panel">
+                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">RAM ALLOCATION</span>
+                    <h3 id="diag-ram" style="font-size: 1.8rem; margin-top: 0.25rem;">0.0%</h3>
+                </div>
+                <div class="diag-card glass-panel db">
+                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">SQLITE SIZE</span>
+                    <h3 id="diag-db" style="font-size: 1.8rem; margin-top: 0.25rem;">0.0 MB</h3>
+                </div>
+                <div class="diag-card glass-panel threads">
+                    <span style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">ACTIVE THREADS</span>
+                    <h3 id="diag-threads" style="font-size: 1.8rem; margin-top: 0.25rem;">0</h3>
+                </div>
+            </div>
+
+            <!-- Live Chart Monitor -->
+            <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="font-family: var(--font-display); color: #fff; margin-bottom: 1rem;"><i class="fas fa-wave-square text-gold"></i> Live CPU &amp; Memory Resource Timeline</h4>
+                <div class="chart-container">
+                    <canvas id="chart-resources"></canvas>
+                </div>
+            </div>
+
+            <!-- SQLite Maintenance Tools -->
+            <div class="glass-panel" style="padding: 2rem;">
+                <h4 style="font-family: var(--font-display); color: #fff; margin-bottom: 0.5rem;"><i class="fas fa-tools text-gold"></i> SQLite Database Optimization</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Running a `VACUUM` and `ANALYZE` operation rebuilds the SQLite file structure, cleans up space from purged accounts/projects, and updates query planner performance metrics.</p>
+                <button class="btn-premium" id="btn-optimize-db">
+                    <i class="fas fa-hammer"></i> Run SQLite VACUUM
+                </button>
+            </div>
+        </section>
+
+        <!-- 6. AUDIT LOGS TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-logs">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-history"></i> Security Audits</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Activity <span class="text-gold">Logs</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Trace backend events, admin plan adjustments, signups, and generation streams.</p>
+            </div>
+
+            <!-- Search Logs -->
+            <div class="admin-filter-bar">
+                <input type="text" placeholder="Search by username or event detail..." class="admin-search-input" id="log-search-input">
+            </div>
+
+            <!-- Logs list -->
+            <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                {% if activity_logs %}
+                    <table class="download-history-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Actor Username</th>
+                                <th>Event Action Logged</th>
+                                <th>IP Address</th>
+                                <th>Event Details</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in activity_logs %}
+                                <tr class="admin-log-row" 
+                                    data-user="{{ log.username if log.username else 'System' }}" 
+                                    data-action="{{ log.action }}" 
+                                    data-details="{{ log.details if log.details else '' }}" 
+                                    data-ip="{{ log.ip_address if log.ip_address else '' }}">
+                                    <td>#{{ log.id }}</td>
+                                    <td><strong style="color: var(--gold-glow)">{{ log.username if log.username else 'System' }}</strong></td>
+                                    <td>{{ log.action }}</td>
+                                    <td><code>{{ log.ip_address if log.ip_address else 'N/A' }}</code></td>
+                                    <td style="font-size: 0.85rem; color: #ccc;">{{ log.details if log.details else 'N/A' }}</td>
+                                    <td>{{ log.created_at }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="premium-empty-state" style="border: none; background: transparent; padding: 3rem 1.5rem; margin: 0 auto;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-list-ul" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>No System Activity Logs</h4>
+                        <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto;">There are no admin diagnostic action logs or auditing entries recorded in SQLite.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 7. MOCK MAIL LOGS TAB PANEL -->
+        <section class="admin-tab-panel" id="tab-mail">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+                <span class="hero-badge"><i class="fas fa-envelope"></i> Simulated Inbox</span>
+                <h2 class="section-title" style="margin-top: 0.5rem;">Mock Mail <span class="text-gold">Logs</span></h2>
+                <p class="section-subtitle" style="margin-left: 0;">Dev-mode outgoing emails capture. Open password reset links directly.</p>
+            </div>
+
+            <!-- Mail log list -->
+            <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                {% if mail_logs %}
+                    <table class="download-history-table">
+                        <thead>
+                            <tr>
+                                <th>Mail ID</th>
+                                <th>Recipient Email</th>
+                                <th>Subject</th>
+                                <th>Dev Action Link</th>
+                                <th>Sent Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mail in mail_logs %}
+                                <tr>
+                                    <td>#{{ mail.id }}</td>
+                                    <td><strong style="color: var(--text-light)">{{ mail.email_to }}</strong></td>
+                                    <td>{{ mail.subject }}</td>
+                                    <td>
+                                        <a href="{{ mail.link }}" class="btn-premium" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; display: inline-flex;" target="_blank">
+                                            Execute Action Link <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </td>
+                                    <td style="font-size: 0.85rem;">{{ mail.sent_at }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="premium-empty-state" style="border: none; background: transparent; padding: 3rem 1.5rem; margin: 0 auto;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-paper-plane" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>No Outgoing Mail Logs</h4>
+                        <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto;">No password reset recovery message emails have been dispatched yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- Support Ticket Reply Dialog Modal -->
+<div class="admin-modal-overlay" id="ticket-reply-modal">
+    <div class="admin-modal-card">
+        <div class="modal-header">
+            <h3 id="modal-subject" style="color: #fff; font-family: var(--font-display);">Ticket Subject</h3>
+            <button class="modal-close" id="modal-close-btn" aria-label="Close modal"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="ticket-reply-form">
+            <input type="hidden" id="modal-ticket-id">
+            <div style="margin-bottom: 1rem;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">From User</span>
+                <p id="modal-from" style="color: var(--gold-glow); font-weight: 600; margin-top: 0.25rem;">name@email.com</p>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Customer Query Message</span>
+                <div id="modal-message" style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.5;">Message content</div>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="modal-reply-text" style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 0.5rem;">Agent Response Text</label>
+                <textarea id="modal-reply-text" required placeholder="Type your ticket response message here..." style="width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 6px; padding: 1rem; color: #fff; font-family: inherit; font-size: 0.9rem; resize: none; outline: none; transition: border-color 0.3s;"></textarea>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <label for="modal-status-select" style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-right: 0.5rem;">Status</label>
+                    <select class="admin-select-filter" id="modal-status-select" style="padding: 0.4rem 1rem; font-size: 0.85rem;">
+                        <option value="Open">Open</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-premium" style="padding: 0.6rem 1.5rem;">
+                    <i class="fas fa-paper-plane"></i> Send Reply
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js CDN for beautiful interactive charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Admin script controller -->
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

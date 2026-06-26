@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LoveEdit Studio - Premium AI Couple Portraits & Romantic Edits{% endblock %}</title>
+    
+    <!-- Core Web Vitals Optimization: Preloads and Preconnects -->
+    <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Meta Descriptions for SEO -->
+    <meta name="description" content="{% block meta_description %}Transform standard photos of you and your partner into stunning cinematic, romantic art pieces. AI-powered face blending, custom color grading, skin retouching, and background replacements in seconds.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}AI Couple Portrait, Romantic Edits, Face Blending AI, Romantic Art Generator, Couple Photo Editor{% endblock %}">
+    {% block robots %}<meta name="robots" content="index, follow">{% endblock %}
+    <link rel="canonical" href="{{ request.url }}">
+
+    <!-- Open Graph (OG) Facebook Metadata -->
+    <meta property="og:title" content="{% block og_title %}LoveEdit Studio - Premium AI Couple Portraits{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Transform casual selfies into gorgeous cinematic romantic art prints. Instant seamless AI face blending and professional color grading.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.url_root }}static/images/style_cinematic.jpg{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="LoveEdit Studio">
+
+    <!-- Twitter Cards Metadata -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}LoveEdit Studio - Premium AI Couple Portraits{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Transform casual selfies into gorgeous cinematic romantic art prints. Instant seamless AI face blending and professional color grading.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.url_root }}static/images/style_cinematic.jpg{% endblock %}">
+
+    <!-- JSON-LD Structured Data Schema -->
+    {% block structured_data %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LoveEdit Studio",
+      "operatingSystem": "All",
+      "applicationCategory": "MultimediaApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "9.00",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "25000"
+      },
+      "description": "Transform standard photos of you and your partner into stunning cinematic, romantic art pieces. AI-powered face blending, custom color grading, skin retouching, and background replacements in seconds.",
+      "creator": {
+        "@type": "Person",
+        "name": "Ayush Jha"
+      }
+    }
+    </script>
+    {% endblock %}
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body class="loading">
+
+    <!-- Premium Preloader Splash Screen -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <i class="fas fa-heart"></i>
+                <span>LoveEdit Studio</span>
+            </div>
+            <div class="preloader-bar-container">
+                <div class="preloader-bar" id="preloader-bar"></div>
+            </div>
+            <span class="preloader-status" id="preloader-status">Initializing Art Studio...</span>
+        </div>
+    </div>
+
+    <!-- Premium Navbar -->
+    <nav class="navbar" id="main-navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('landing') }}" class="logo" id="nav-logo">
+                <i class="fas fa-heart"></i> LoveEdit Studio
+            </a>
+            
+            <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('landing') }}#features" class="nav-link">Features</a></li>
+                    <li><a href="{{ url_for('landing') }}#styles" class="nav-link">Styles</a></li>
+                    <li><a href="{{ url_for('landing') }}#pricing" class="nav-link">Pricing</a></li>
+                    <li><a href="{{ url_for('landing') }}#faq" class="nav-link">FAQs</a></li>
+                    {% if session.get('user_id') %}
+                        <li><a href="{{ url_for('dashboard') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">Studio</a></li>
+                        <li><a href="{{ url_for('gallery') }}" class="nav-link {% if active_page == 'gallery' %}active{% endif %}">My Gallery</a></li>
+                        <li><a href="{{ url_for('user_dashboard') }}" class="nav-link {% if active_page == 'user_dashboard' %}active{% endif %}">My Account</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if active_page == 'admin' %}active{% endif %}">Admin Console</a></li>
+                </ul>
+                
+                <div class="nav-buttons">
+                    {% if session.get('user_id') %}
+                        <!-- Notification Center Dropdown -->
+                        <div class="notification-center-dropdown" style="position: relative; margin-right: 0.75rem; z-index: 9999;">
+                            <button type="button" id="notification-bell-btn" class="btn-icon" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold-glow); width: 45px; height: 45px; border-radius: 50%; color: var(--gold-glow); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;" title="Notifications">
+                                <i class="far fa-bell" style="font-size: 1.05rem;"></i>
+                                <span class="notification-badge" id="notification-unread-badge" style="display: none;">0</span>
+                            </button>
+                            
+                            <!-- Elegant Dropdown List -->
+                            <div class="notification-dropdown-menu glass-panel" id="notification-dropdown">
+                                <div class="notification-dropdown-header">
+                                    <h5>
+                                        <i class="fas fa-bell"></i> Notifications
+                                    </h5>
+                                    <button type="button" id="btn-mark-all-read">Mark all read</button>
+                                </div>
+                                
+                                <!-- Filtering Options inside Dropdown -->
+                                <div class="notification-dropdown-filters">
+                                    <button type="button" class="notif-filter-btn active" data-filter="all">All</button>
+                                    <button type="button" class="notif-filter-btn" data-filter="generation">Generations</button>
+                                    <button type="button" class="notif-filter-btn" data-filter="subscription">Sub</button>
+                                    <button type="button" class="notif-filter-btn" data-filter="system">System</button>
+                                    <button type="button" class="notif-filter-btn" data-filter="promo">Offers</button>
+                                </div>
+                                
+                                <div class="notification-dropdown-body" id="notification-items-list">
+                                    <!-- Dynamic content loads here -->
+                                </div>
+                                
+                                <div class="notification-dropdown-footer">
+                                    <button type="button" id="btn-clear-all-notif">Clear all</button>
+                                    <span id="notification-summary-text">No notifications</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="welcome-text" style="font-size: 0.9rem; color: var(--text-muted); margin-right: 0.5rem;">Welcome, <strong style="color: var(--gold-glow)">{{ session.get('username') }}</strong></span>
+                        <a href="{{ url_for('logout') }}" class="btn-outline">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn-text">Sign In</a>
+                        <a href="{{ url_for('register') }}" class="btn-premium">Create Account <i class="fas fa-arrow-right"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Hamburger menu toggle -->
+            <button type="button" class="navbar-toggle" id="navbar-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Block with Page Transitions -->
+    <main class="page-entrance-wrapper" id="main-content-wrapper" style="min-height: 80vh;">
+        <!-- Flash Notification Banners -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="section" style="padding: 6rem 2rem 0; margin-bottom: -4rem; max-width: 800px;">
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Enterprise-grade Luxury Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Col 1: Brand & Contact Info -->
+            <div class="footer-brand">
+                <a href="{{ url_for('landing') }}" class="footer-logo">
+                    <i class="fas fa-heart"></i> LoveEdit Studio
+                </a>
+                <p class="footer-desc">Crafting spectacular, high-end memories for couples with premium AI filters, flawless face blending, and luxurious cinematic print layouts.</p>
+                
+                <div class="footer-contact-info">
+                    <p><i class="fas fa-envelope"></i> jhaayushkumar18@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +91 9905315622</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Bengaluru, Karnataka, India</p>
+                </div>
+                
+                <div class="footer-socials">
+                    <a href="https://www.instagram.com/ayushjha__07/" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1DKrswscHk/" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://pin.it/69AL65Dz8" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                    <a href="https://wa.me/919905315622" target="_blank" rel="noopener noreferrer" class="btn-icon" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            
+            <!-- Col 2: Love Studio -->
+            <div class="footer-links-col">
+                <h4>Love Studio</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#styles">Creative Styles</a></li>
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#features">AI Features</a></li>
+                    <li class="footer-link"><a href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}">Creative Canvas</a></li>
+                    <li class="footer-link"><a href="{{ url_for('gallery') if session.get('user_id') else url_for('login') }}">User Vault</a></li>
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#showcase">Transformation Showcase</a></li>
+                </ul>
+            </div>
+            
+            <!-- Col 3: Pricing & Gifting -->
+            <div class="footer-links-col">
+                <h4>Pricing &amp; Gifting</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#pricing">Personal Plans</a></li>
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#pricing">Corporate Packages</a></li>
+                    <li class="footer-link"><a href="#">Gift Vouchers</a></li>
+                    <li class="footer-link"><a href="#">Affiliate Program</a></li>
+                    <li class="footer-link"><a href="#">Success Stories</a></li>
+                </ul>
+            </div>
+            
+            <!-- Col 4: Support & Legal -->
+            <div class="footer-links-col">
+                <h4>Support &amp; Legal</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#faq">FAQ Help Desk</a></li>
+                    <li class="footer-link"><a href="{{ url_for('landing') }}#contact">Contact Studio</a></li>
+                    <li class="footer-link"><a href="#">Privacy Policy</a></li>
+                    <li class="footer-link"><a href="#">Terms of Service</a></li>
+                    <li class="footer-link"><a href="#">Cookie Preferences</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 5: Newsletter Subscription -->
+            <div class="footer-newsletter-col">
+                <h4>Newsletter</h4>
+                <p class="newsletter-desc">Subscribe to receive seasonal art styles, couple portrait inspiration, and luxury print offers.</p>
+                <form id="footer-newsletter-form" class="newsletter-form" onsubmit="event.preventDefault(); showToast('Thank you for subscribing to LoveEdit updates!', 'success'); this.reset();">
+                    <div class="newsletter-input-group">
+                        <input type="email" required placeholder="Enter your email" aria-label="Email address" class="newsletter-input">
+                        <button type="submit" class="btn-newsletter" aria-label="Subscribe">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p class="copyright">&copy; 2026 LoveEdit Studio. All rights reserved. Crafting romance across the globe.</p>
+                <div class="legal-links">
+                    <a href="#">Security</a> &bull;
+                    <a href="#">Compliance</a> &bull;
+                    <a href="#">Sitemap</a>
+                </div>
+                <p class="designed-by">Designed by Ayush Jha | Lead Developer</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Script -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% if session.get('user_id') %}
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

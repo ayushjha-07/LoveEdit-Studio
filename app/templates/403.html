@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}403 - Access Denied | LoveEdit Studio{% endblock %}
+
+{% block content %}
+<div class="section" style="min-height: 85vh; display: flex; align-items: center; justify-content: center;">
+    <div class="premium-empty-state" style="max-width: 600px; padding: 4rem 2rem; border-color: var(--border-glow);">
+        <div class="empty-icon-wrapper" style="width: 80px; height: 80px; background: rgba(229, 193, 88, 0.08); border-color: rgba(229, 193, 88, 0.2);">
+            <i class="fas fa-lock" style="color: var(--gold-primary); font-size: 2.25rem; filter: drop-shadow(0 0 8px rgba(229,193,88,0.4));"></i>
+        </div>
+        <span class="hero-badge" style="background: rgba(229, 193, 88, 0.1); color: var(--gold-primary); border: 1px solid rgba(229, 193, 88, 0.25);"><i class="fas fa-ban"></i> ERROR Code 403</span>
+        <h2 style="font-family: var(--font-heading); font-size: 2.25rem; color: #fff; margin-top: 0.5rem; margin-bottom: 0.5rem;">Access Forbidden</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            {{ error_description or "You do not have permission to view this restricted page or directory resource. This features tier may require a different membership level." }}
+        </p>
+        
+        <div class="onboarding-hints" style="text-align: left; width: 100%;">
+            <div class="hint-item">
+                <i class="fas fa-key" style="color: var(--gold-primary);"></i>
+                <span><strong>Privileges:</strong> Verify you are signed into the correct username account.</span>
+            </div>
+            <div class="hint-item">
+                <i class="fas fa-crown" style="color: var(--gold-primary);"></i>
+                <span><strong>Plan Tier:</strong> Upgrade to Premium/VIP to access exclusive asset vaults and settings.</span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; width: 100%; margin-top: 1rem; justify-content: center;">
+            <a href="{{ url_for('user_dashboard') }}#subscription" class="btn-outline" style="flex: 1; justify-content: center; max-width: 180px;">Upgrade Plan</a>
+            <a href="{{ url_for('dashboard') }}" class="btn-premium" style="flex: 1; justify-content: center; max-width: 180px; background: var(--gold-gradient); color:#000;">Back to Studio <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>
+{% endblock %}

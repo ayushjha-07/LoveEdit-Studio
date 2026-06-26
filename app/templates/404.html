@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}404 - Page Not Found | LoveEdit Studio{% endblock %}
+
+{% block content %}
+<div class="section" style="min-height: 85vh; display: flex; align-items: center; justify-content: center;">
+    <div class="premium-empty-state" style="max-width: 600px; padding: 4rem 2rem; border-color: var(--border-glow);">
+        <div class="empty-icon-wrapper" style="width: 80px; height: 80px; background: rgba(244, 67, 54, 0.08); border-color: rgba(244, 67, 54, 0.25);">
+            <i class="fas fa-compass" style="color: #ff5252; font-size: 2.25rem;"></i>
+        </div>
+        <span class="hero-badge" style="background: rgba(244, 67, 54, 0.15); color: #ff8585; border: 1px solid rgba(244, 67, 54, 0.3);"><i class="fas fa-exclamation-triangle"></i> ERROR Code 404</span>
+        <h2 style="font-family: var(--font-heading); font-size: 2.25rem; color: #fff; margin-top: 0.5rem; margin-bottom: 0.5rem;">Coordinates Lost</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            The romantic portal coordinates you are looking for do not exist. It might have been moved, renamed, or is temporarily unavailable.
+        </p>
+        
+        <div class="onboarding-hints" style="text-align: left; width: 100%;">
+            <div class="hint-item">
+                <i class="fas fa-info-circle" style="color: var(--gold-primary);"></i>
+                <span><strong>Check URL:</strong> Make sure the browser path address has no typos.</span>
+            </div>
+            <div class="hint-item">
+                <i class="fas fa-home" style="color: var(--gold-primary);"></i>
+                <span><strong>Go Home:</strong> Return to the homepage or login to access your customer dashboard.</span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; width: 100%; margin-top: 1rem; justify-content: center;">
+            <a href="{{ url_for('landing') }}" class="btn-outline" style="flex: 1; justify-content: center; max-width: 180px;">Go Home</a>
+            <a href="{{ url_for('dashboard') }}" class="btn-premium" style="flex: 1; justify-content: center; max-width: 180px;">Open Studio <i class="fas fa-magic"></i></a>
+        </div>
+    </div>
+</div>
+{% endblock %}

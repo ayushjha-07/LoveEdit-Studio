@@ -1,0 +1,679 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="position: relative; overflow: hidden;">
+    <!-- Floating particles background -->
+    <div class="hero-particles">
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+    </div>
+
+    <div class="hero-container" style="position: relative; z-index: 2;">
+        <div class="hero-content">
+            <span class="hero-badge">
+                <i class="fas fa-sparkles"></i> Premium AI Artistry
+            </span>
+            <h1 class="hero-title">
+                Create Majestic <span class="text-gold">Romantic Artwork</span> Together
+            </h1>
+            <p class="hero-subtitle">
+                Transform standard snapshots of you and your partner into breathtaking editorial photoshoots, Bollywood movie posters, or neon cyberpunk portraits. Experience smart face-blending and professional studio styling instantly.
+            </p>
+            <div class="hero-cta">
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('register') }}" class="btn-premium">
+                    <i class="fas fa-magic"></i> Generate Your Art Now
+                </a>
+                <a href="#styles" class="btn-outline">
+                    Explore 15+ Styles
+                </a>
+            </div>
+            <div class="hero-features">
+                <div class="hero-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Seamless Face Blending</span>
+                </div>
+                <div class="hero-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>One-Click Backgrounds</span>
+                </div>
+                <div class="hero-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Smart Lighting Match</span>
+                </div>
+                <div class="hero-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>4K High-Resolution Exports</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interactive Before/After Showcase Slider -->
+        <div class="hero-showcase">
+            <div class="showcase-container">
+                <div class="slider-wrapper">
+                    <!-- Before image (casual selfie) -->
+                    <img class="slider-img slider-before" src="{{ url_for('static', filename='images/sample_before.jpg') }}" alt="Casual Selfie before edit" width="1024" height="1024" fetchpriority="high">
+                    <span class="slider-label label-before">Casual Selfie</span>
+                    
+                    <!-- After image (gorgeous sunset art edit) -->
+                    <img class="slider-img slider-after" src="{{ url_for('static', filename='images/sample_after.jpg') }}" alt="Sunset Romance edit" width="1024" height="1024" fetchpriority="high">
+                    <span class="slider-label label-after">Sunset Art Print</span>
+                    
+                    <!-- Slider separation line & drag handle -->
+                    <div class="slider-bar">
+                        <div class="slider-handle">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Visually Stunning Statistics Section -->
+<section class="section-stats-bar reveal-fade-up">
+    <div class="stats-bar-container">
+        <div class="stats-grid stats-bar-grid reveal-stagger-container">
+            <!-- 1. Images Generated -->
+            <div class="stat-bar-card glass-panel">
+                <div class="stat-bar-icon-wrap">
+                    <div class="stat-bar-icon-glow"></div>
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="stat-bar-number-wrap">
+                    <span class="stat-number" data-target="100" data-suffix="K+">0</span>
+                </div>
+                <div class="stat-bar-label">Images Generated</div>
+            </div>
+
+            <!-- 2. Happy Couples -->
+            <div class="stat-bar-card glass-panel">
+                <div class="stat-bar-icon-wrap">
+                    <div class="stat-bar-icon-glow"></div>
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-bar-number-wrap">
+                    <span class="stat-number" data-target="25" data-suffix="K+">0</span>
+                </div>
+                <div class="stat-bar-label">Happy Couples</div>
+            </div>
+
+            <!-- 3. Premium Styles -->
+            <div class="stat-bar-card glass-panel">
+                <div class="stat-bar-icon-wrap">
+                    <div class="stat-bar-icon-glow"></div>
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="stat-bar-number-wrap">
+                    <span class="stat-number" data-target="15">0</span>
+                </div>
+                <div class="stat-bar-label">Premium Styles</div>
+            </div>
+
+            <!-- 4. Satisfaction Rate -->
+            <div class="stat-bar-card glass-panel">
+                <div class="stat-bar-icon-wrap">
+                    <div class="stat-bar-icon-glow"></div>
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-bar-number-wrap">
+                    <span class="stat-number" data-target="99.9" data-decimals="1" data-suffix="%">0</span>
+                </div>
+                <div class="stat-bar-label">Satisfaction Rate</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Details Grid Section -->
+<section id="features" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-wand-magic-sparkles"></i> Feature Suite</span>
+        <h2 class="section-title">Engineered For <span class="text-gold">Visual Perfection</span></h2>
+        <p class="section-subtitle">Our intelligent image compositing pipeline performs high-end calculations to mimic professional photographers and digital retouchers.</p>
+    </div>
+    
+    <div class="steps-grid reveal-stagger-container">
+        <div class="step-card glass-panel">
+            <div class="step-number"><i class="fas fa-face-smile"></i></div>
+            <h3 class="step-title">AI Face Blending</h3>
+            <p class="step-desc">Advanced alpha masks and color harmonic blending match coordinates to keep your natural facial expressions perfectly intact.</p>
+        </div>
+        <div class="step-card glass-panel">
+            <div class="step-number"><i class="fas fa-lightbulb"></i></div>
+            <h3 class="step-title">Lighting Adjustment</h3>
+            <p class="step-desc">Automatically adjusts foreground shadows, ambient glows, and light temperatures to match the selected backdrop aesthetic.</p>
+        </div>
+        <div class="step-card glass-panel">
+            <div class="step-number"><i class="fas fa-brush"></i></div>
+            <h3 class="step-title">Skin Retouching</h3>
+            <p class="step-desc">Smart bilateral filters smooth out noise and skin blemishes while retaining sharp details of eyes, hair, and outlines.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Interactive Showcase & Stats Section -->
+<section id="showcase" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-images"></i> Transformation Showcase</span>
+        <h2 class="section-title">One Selfie. <span class="text-gold">Infinite Masterpieces.</span></h2>
+        <p class="section-subtitle">See how a single casual couple photo is instantly redesigned into our most popular signature art styles.</p>
+    </div>
+    
+    <div class="showcase-tabs-container reveal-fade-up">
+        <!-- Tab Controls -->
+        <div class="showcase-tabs">
+            <button type="button" class="showcase-tab active" data-style="sunset">
+                <i class="fas fa-sun"></i> Sunset Romance
+            </button>
+            <button type="button" class="showcase-tab" data-style="cyberpunk">
+                <i class="fas fa-user-astronaut"></i> Neon Cyberpunk
+            </button>
+            <button type="button" class="showcase-tab" data-style="royal">
+                <i class="fas fa-crown"></i> Royal Traditional
+            </button>
+        </div>
+        
+        <!-- Tab Content / Sliders -->
+        <div class="showcase-slider-container glass-panel">
+            <!-- 1. Sunset Slider -->
+            <div class="showcase-slider-wrapper active" id="slider-sunset">
+                <div class="slider-wrapper">
+                    <img class="slider-img slider-before" src="{{ url_for('static', filename='images/sample_before.jpg') }}" alt="Casual Couple Selfie" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-before">Casual Selfie</span>
+                    
+                    <img class="slider-img slider-after" src="{{ url_for('static', filename='images/sample_after.jpg') }}" alt="Sunset Romance Art" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-after">Sunset Art Print</span>
+                    
+                    <div class="slider-bar">
+                        <div class="slider-handle">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Cyberpunk Slider -->
+            <div class="showcase-slider-wrapper" id="slider-cyberpunk">
+                <div class="slider-wrapper">
+                    <img class="slider-img slider-before" src="{{ url_for('static', filename='images/sample_before.jpg') }}" alt="Casual Couple Selfie" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-before">Casual Selfie</span>
+                    
+                    <img class="slider-img slider-after" src="{{ url_for('static', filename='images/style_cyberpunk.jpg') }}" alt="Cyberpunk Neon Art" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-after">Neon Cyberpunk</span>
+                    
+                    <div class="slider-bar">
+                        <div class="slider-handle">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. Royal Slider -->
+            <div class="showcase-slider-wrapper" id="slider-royal">
+                <div class="slider-wrapper">
+                    <img class="slider-img slider-before" src="{{ url_for('static', filename='images/sample_before.jpg') }}" alt="Casual Couple Selfie" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-before">Casual Selfie</span>
+                    
+                    <img class="slider-img slider-after" src="{{ url_for('static', filename='images/style_royal.jpg') }}" alt="Royal Traditional Art" width="1024" height="1024" loading="lazy">
+                    <span class="slider-label label-after">Royal Traditional</span>
+                    
+                    <div class="slider-bar">
+                        <div class="slider-handle">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+
+<!-- Styles Showcase Grid Section -->
+<section id="styles" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-film"></i> Art Presets</span>
+        <h2 class="section-title">Featured <span class="text-gold">Romantic Presets</span></h2>
+        <p class="section-subtitle">Explore a curated selection of our 50+ professionally designed presets, spanning Cinematic, Wedding, Fantasy, Anime, and more.</p>
+    </div>
+    
+    <div class="style-grid reveal-stagger-container">
+        {% for style in styles %}
+            <div class="style-card" tabindex="0" role="img" aria-label="Style preset: {{ style.name }}" style="border-radius: 12px; overflow: hidden; position: relative;">
+                <img class="style-card-img" src="{{ url_for('static', filename='images/' + style.thumbnail) }}" alt="{{ style.name }}" width="1024" height="1024" loading="lazy">
+                <div class="style-card-overlay" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);">
+                    <span class="style-card-title" style="font-size: 1.1rem; font-weight: 700; color: #fff;">{{ style.name }}</span>
+                    <span class="style-card-desc" style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem; line-height: 1.3;">{{ style.description }}</span>
+                    <div style="margin-top: 0.5rem;">
+                        <span class="badge" style="font-size: 0.55rem; background: rgba(212,175,55,0.2); color: var(--gold-primary); padding: 0.15rem 0.45rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">{{ style.category }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-play"></i> Workflow</span>
+        <h2 class="section-title">Three Steps To <span class="text-gold">Eternal Memories</span></h2>
+        <p class="section-subtitle">No graphic design skills required. Our studio is built for effortless creation.</p>
+    </div>
+    
+    <div class="steps-grid reveal-stagger-container">
+        <div class="step-card glass-panel">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Upload Photos</h3>
+            <p class="step-desc">Select one clear, front-facing photo of yourself, and one of your partner. Drag and drop in our studio.</p>
+        </div>
+        <div class="step-card glass-panel">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Select Preset Style</h3>
+            <p class="step-desc">Choose from our 15 signature styles. Toggle background replacement and adjust skin retouch slider strength.</p>
+        </div>
+        <div class="step-card glass-panel">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Download in HD/4K</h3>
+            <p class="step-desc">Click "Generate". Compare the result using the interactive before/after slider. Save and export to your device.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Tiers Section -->
+<section id="pricing" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-tag"></i> Plans</span>
+        <h2 class="section-title">Choose Your <span class="text-gold">Creative Tier</span></h2>
+        <p class="section-subtitle">Unlock unlimited processing, custom background overrides, and pristine 4K resolution exports.</p>
+    </div>
+    
+    <div class="pricing-grid reveal-stagger-container">
+        <!-- Starter Plan -->
+        <div class="price-card glass-panel">
+            <div class="price-header">
+                <h3 class="price-name">Basic Lover</h3>
+                <div class="price-amount">$0<span>/month</span></div>
+            </div>
+            <ul class="price-features">
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> 5 Generations per month</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Standard HD Export (1080p)</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> 4 Standard Romantic Styles</li>
+                <li class="disabled" style="opacity: 0.35;"><i class="fas fa-circle-xmark" style="color: rgba(255,255,255,0.25);"></i> Skin Retouching Slider</li>
+                <li class="disabled" style="opacity: 0.35;"><i class="fas fa-circle-xmark" style="color: rgba(255,255,255,0.25);"></i> Custom Background Upload</li>
+                <li class="disabled" style="opacity: 0.35;"><i class="fas fa-circle-xmark" style="color: rgba(255,255,255,0.25);"></i> 4K UHD Export</li>
+            </ul>
+            <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('register') }}" class="btn-outline price-btn">Get Started Free</a>
+        </div>
+        
+        <!-- Popular Plan (with Conic Border wrap) -->
+        <div class="price-card popular">
+            <div class="price-card-inner">
+                <span class="popular-badge">Most Popular</span>
+                <div class="price-header">
+                    <h3 class="price-name">Golden Romance</h3>
+                    <div class="price-amount">$9<span>/month</span></div>
+                </div>
+                <ul class="price-features">
+                    <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Unlimited Generations</li>
+                    <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Full HD Export (1080p)</li>
+                    <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Access all 15 Romantic Styles</li>
+                    <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Smart Skin Retouching</li>
+                    <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Automatic Background Replacement</li>
+                    <li class="disabled" style="opacity: 0.35;"><i class="fas fa-circle-xmark" style="color: rgba(255,255,255,0.25);"></i> 4K Ultra-HD Export</li>
+                </ul>
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('register') }}" class="btn-premium price-btn">Upgrade to Gold <i class="fas fa-crown"></i></a>
+            </div>
+        </div>
+        
+        <!-- Pro Plan -->
+        <div class="price-card glass-panel">
+            <div class="price-header">
+                <h3 class="price-name">Studio Master</h3>
+                <div class="price-amount">$19<span>/month</span></div>
+            </div>
+            <ul class="price-features">
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Unlimited Generations</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> 4K Ultra-HD Export</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Access all 15 Romantic Styles</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Advanced Lighting matching</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Custom Background Uploads</li>
+                <li><i class="fas fa-circle-check" style="color: var(--gold-primary);"></i> Priority API Processing</li>
+            </ul>
+            <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('register') }}" class="btn-outline price-btn">Access Pro Studio</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-star"></i> Reviews</span>
+        <h2 class="section-title">Words From <span class="text-gold">Happy Couples</span></h2>
+        <p class="section-subtitle">Discover how LoveEdit Studio helps users capture their romance and share it online.</p>
+    </div>
+    
+    <!-- Premium Testimonials Carousel -->
+    <div class="carousel-container reveal-fade-up">
+        <div class="carousel-track-container">
+            <div class="carousel-track" id="testimonial-carousel">
+                <!-- Slide 1 -->
+                <div class="carousel-slide active">
+                    <div class="review-card glass-panel">
+                        <div class="review-top">
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="verified-badge"><i class="fas fa-circle-check"></i> Verified Couple</span>
+                        </div>
+                        <p class="review-text">"We wanted unique wedding invites. We uploaded our pictures to the Royal Traditional style, and the result was so gorgeous we printed them on canvas. The face blending is incredibly natural."</p>
+                        <div class="review-footer">
+                            <div class="review-author">
+                                <img class="author-avatar" src="{{ url_for('static', filename='images/user_avatar_1.jpg') }}" alt="Karan & Simran" width="150" height="150" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Karan &amp; Simran</h4>
+                                    <p class="author-role">Verified Print Clients</p>
+                                </div>
+                            </div>
+                            <div class="social-metrics">
+                                <span class="metric-item"><i class="fas fa-wallet"></i> Saved $45 on Canvas</span>
+                                <span class="metric-item"><i class="fas fa-wand-magic-sparkles"></i> 8 Edits Made</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="carousel-slide">
+                    <div class="review-card glass-panel">
+                        <div class="review-top">
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="verified-badge"><i class="fas fa-circle-check"></i> Verified Member</span>
+                        </div>
+                        <p class="review-text">"Love the Neon Cyberpunk style! It's so cool. The before/after comparison slider showed how well the shadows on my face were adjusted to match the background glow. Completely seamless."</p>
+                        <div class="review-footer">
+                            <div class="review-author">
+                                <img class="author-avatar" src="{{ url_for('static', filename='images/user_avatar_2.jpg') }}" alt="Elena & Alex" width="150" height="150" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Elena &amp; Alex</h4>
+                                    <p class="author-role">Pro Member</p>
+                                </div>
+                            </div>
+                            <div class="social-metrics">
+                                <span class="metric-item"><i class="fas fa-download"></i> 4K UHD Exported</span>
+                                <span class="metric-item"><i class="fas fa-images"></i> 14 Creations Saved</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3 -->
+                <div class="carousel-slide">
+                    <div class="review-card glass-panel">
+                        <div class="review-top">
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <span class="verified-badge"><i class="fas fa-circle-check"></i> Verified Creator</span>
+                        </div>
+                        <p class="review-text">"Literally takes 10 seconds. We've generated photos of us traveling through Paris, standing in front of sunsets, and they look completely professional. Unbelievable value for social media."</p>
+                        <div class="review-footer">
+                            <div class="review-author">
+                                <img class="author-avatar" src="{{ url_for('static', filename='images/user_avatar_3.jpg') }}" alt="Rohan & Ananya" width="150" height="150" loading="lazy">
+                                <div class="author-info">
+                                    <h4>Rohan &amp; Ananya</h4>
+                                    <p class="author-role">Priority Member</p>
+                                </div>
+                            </div>
+                            <div class="social-metrics">
+                                <span class="metric-item"><i class="fas fa-share-nodes"></i> Shared to Insta/Pinterest</span>
+                                <span class="metric-item"><i class="fas fa-clock"></i> 2-Sec Gen Speed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <button type="button" class="carousel-control prev" id="carousel-prev" aria-label="Previous Testimonial"><i class="fas fa-chevron-left"></i></button>
+        <button type="button" class="carousel-control next" id="carousel-next" aria-label="Next Testimonial"><i class="fas fa-chevron-right"></i></button>
+        
+        <!-- Dots -->
+        <div class="carousel-dots">
+            <button type="button" class="carousel-dot active" data-slide="0" aria-label="Go to slide 1"></button>
+            <button type="button" class="carousel-dot" data-slide="1" aria-label="Go to slide 2"></button>
+            <button type="button" class="carousel-dot" data-slide="2" aria-label="Go to slide 3"></button>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Accordion Section -->
+<section id="faq" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-question-circle"></i> Help Desk</span>
+        <h2 class="section-title">Frequently Asked <span class="text-gold">Questions</span></h2>
+        <p class="section-subtitle">Got questions? We've got answers. If you need anything else, feel free to contact us.</p>
+    </div>
+    
+    <!-- FAQ Search Bar Container -->
+    <div class="faq-search-container reveal-fade-up">
+        <div class="faq-search-wrapper glass-panel">
+            <i class="fas fa-magnifying-glass search-icon"></i>
+            <input type="text" id="faq-search-input" placeholder="Search frequently asked questions..." autocomplete="off">
+            <button type="button" id="faq-search-clear" class="search-clear-btn" style="display: none;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="faq-container reveal-fade-up">
+        <div class="faq-item glass-panel">
+            <button class="faq-header" id="faq-header-0" aria-expanded="false" aria-controls="faq-content-0">
+                <span>How does the AI face blending work?</span>
+                <span class="faq-icon-wrapper">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            <div class="faq-content" id="faq-content-0" role="region" aria-labelledby="faq-header-0">
+                <p>Our algorithm extracts the facial structures from your uploaded photos, maps their landmarks, and blends them using high-precision transparency masks onto pre-configured studio layers. The skin-tone and lighting match ensure both faces blend seamlessly under the selected theme environment.</p>
+            </div>
+        </div>
+        <div class="faq-item glass-panel">
+            <button class="faq-header" id="faq-header-1" aria-expanded="false" aria-controls="faq-content-1">
+                <span>Are my uploaded photos private and safe?</span>
+                <span class="faq-icon-wrapper">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            <div class="faq-content" id="faq-content-1" role="region" aria-labelledby="faq-header-1">
+                <p>Absolutely. We prioritize your privacy. All uploaded photos are securely stored, processed locally on the server, and only accessible via your registered user account. We never sell or share your data.</p>
+            </div>
+        </div>
+        <div class="faq-item glass-panel">
+            <button class="faq-header" id="faq-header-2" aria-expanded="false" aria-controls="faq-content-2">
+                <span>Can I upload my own custom backgrounds?</span>
+                <span class="faq-icon-wrapper">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            <div class="faq-content" id="faq-content-2" role="region" aria-labelledby="faq-header-2">
+                <p>Yes! Our Studio Master Pro tier allows you to upload custom background images. The AI will isolate you and your partner, color-grade you, and blend you seamlessly onto your uploaded image.</p>
+            </div>
+        </div>
+        <div class="faq-item glass-panel">
+            <button class="faq-header" id="faq-header-3" aria-expanded="false" aria-controls="faq-content-3">
+                <span>What is the difference between HD and 4K exports?</span>
+                <span class="faq-icon-wrapper">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            <div class="faq-content" id="faq-content-3" role="region" aria-labelledby="faq-header-3">
+                <p>HD exports render at high-fidelity 1920x1080 resolution, which is perfect for social sharing (Instagram, WhatsApp, Facebook). 4K exports compile the image at ultra-high-definition 3840x2160 pixels with advanced image sharpening, making them perfect for large canvas printing and high-end screens.</p>
+            </div>
+        </div>
+        <div class="faq-item glass-panel">
+            <button class="faq-header" id="faq-header-4" aria-expanded="false" aria-controls="faq-content-4">
+                <span>Who do I contact for priority help or custom enquiries?</span>
+                <span class="faq-icon-wrapper">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </button>
+            <div class="faq-content" id="faq-content-4" role="region" aria-labelledby="faq-header-4">
+                <p>For custom photo edits, subscription issues, or business integration, you can directly contact our lead developer, Ayush Jha, at +91 9905315622 or via email at jhaayushkumar18@gmail.com.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Empty Search State -->
+    <div class="faq-no-results glass-panel" id="faq-empty-state" style="display: none;">
+        <i class="fas fa-circle-question"></i>
+        <h3>No matching questions found</h3>
+        <p>Try searching for keywords like "face blending", "4k", "privacy", or "contact".</p>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section id="contact" class="section">
+    <div class="section-header reveal-fade-up">
+        <span class="hero-badge" style="align-self: center;"><i class="fas fa-envelope"></i> Message Us</span>
+        <h2 class="section-title">Get In <span class="text-gold">Touch</span></h2>
+        <p class="section-subtitle">Interested in bulk orders, API access, or having a question about your subscription? Drop us a line.</p>
+    </div>
+    
+    <div class="contact-grid reveal-fade-up">
+        <!-- Left Column: Support Channels & FAQ Shortcuts -->
+        <div class="contact-info-card glass-panel">
+            <h3 class="contact-card-title"><i class="fas fa-headset text-gold"></i> Support Hub</h3>
+            <p class="contact-card-desc">Need immediate support or have quick questions? Access our primary channels below.</p>
+            
+            <div class="contact-channels">
+                <div class="channel-item">
+                    <div class="channel-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="channel-details">
+                        <h4>Direct Email</h4>
+                        <a href="mailto:jhaayushkumar18@gmail.com" class="channel-link">jhaayushkumar18@gmail.com</a>
+                    </div>
+                </div>
+                <div class="channel-item">
+                    <div class="channel-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div class="channel-details">
+                        <h4>Call Center</h4>
+                        <span class="channel-text">+91 9905315622</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="live-chat-block">
+                <h4>Real-time Assistance</h4>
+                <p class="chat-desc">Connect with our virtual consultant for instant art answers.</p>
+                <button type="button" class="btn-chat-premium" id="btn-live-chat">
+                    <i class="fas fa-comments"></i> Start Live Chat
+                </button>
+            </div>
+            
+            <div class="faq-shortcuts-block">
+                <h4>Quick FAQ Reference</h4>
+                <div class="faq-shortcut-tags">
+                    <button type="button" class="faq-shortcut-btn" data-faq-index="0">AI Face Blending</button>
+                    <button type="button" class="faq-shortcut-btn" data-faq-index="1">Photo Privacy</button>
+                    <button type="button" class="faq-shortcut-btn" data-faq-index="2">Custom Backdrops</button>
+                    <button type="button" class="faq-shortcut-btn" data-faq-index="3">HD vs 4K Prints</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Premium Contact Form -->
+        <div class="contact-form-card glass-panel" id="contact-form-container">
+            <!-- Form State -->
+            <form id="premium-contact-form" action="{{ url_for('submit_contact') }}" method="POST" class="contact-form-wrapper" novalidate>
+                <h3 class="contact-card-title"><i class="fas fa-paper-plane text-gold"></i> Send Message</h3>
+                
+                <div class="form-grid-upgraded">
+                    <div class="form-group-upgraded">
+                        <label for="contact-name" class="form-label-upgraded">Full Name</label>
+                        <input type="text" id="contact-name" name="name" class="form-input-upgraded" placeholder="e.g. Simran Kaur" required>
+                        <span class="error-msg" id="error-name">Please enter your name</span>
+                    </div>
+                    
+                    <div class="form-group-upgraded">
+                        <label for="contact-email" class="form-label-upgraded">Email Address</label>
+                        <input type="email" id="contact-email" name="email" class="form-input-upgraded" placeholder="e.g. simran@example.com" required>
+                        <span class="error-msg" id="error-email">Please enter a valid email address</span>
+                    </div>
+                    
+                    <div class="form-group-upgraded full-width">
+                        <label for="contact-subject" class="form-label-upgraded">Subject</label>
+                        <input type="text" id="contact-subject" name="subject" class="form-input-upgraded" placeholder="How can we help you?" required>
+                        <span class="error-msg" id="error-subject">Please specify a subject</span>
+                    </div>
+                    
+                    <div class="form-group-upgraded full-width">
+                        <label for="contact-message" class="form-label-upgraded">Message Details</label>
+                        <textarea id="contact-message" name="message" class="form-input-upgraded text-area-upgraded" placeholder="Write your enquiries or feedback here..." required></textarea>
+                        <span class="error-msg" id="error-message">Please write a message</span>
+                    </div>
+                    
+                    <div class="form-group-upgraded full-width" style="margin-top: 1rem;">
+                        <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 1rem;">
+                            Submit Enquiry <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Success State (Hidden by default) -->
+            <div class="contact-success-state" id="contact-success-container">
+                <div class="success-icon-wrap">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Message Dispatched!</h3>
+                <p>Thank you for reaching out to LoveEdit Studio. An art consultant has been notified and will reply to <strong id="success-email-holder" style="color: var(--gold-primary)">your email</strong> within 24 hours.</p>
+                <button type="button" class="btn-outline" id="btn-reset-contact" style="margin-top: 1rem;">Send Another Message</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Floating Live Chat Widget (Hidden by default) -->
+<div class="live-chat-widget glass-panel" id="live-chat-panel">
+    <div class="chat-header">
+        <div class="chat-title-info">
+            <span class="chat-status-dot"></span>
+            <h5>LoveEdit Assistant</h5>
+        </div>
+        <button type="button" class="btn-close-chat" id="btn-close-chat" aria-label="Close Chat"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="chat-history" id="chat-history-box">
+        <div class="chat-msg system">
+            <p>Hello! Welcome to LoveEdit Studio. Ask me anything about our styles, face blending, or resolutions! How can I help you and your partner today?</p>
+            <span class="msg-time">Just now</span>
+        </div>
+    </div>
+    
+    <form id="chat-input-form" class="chat-input-area">
+        <input type="text" id="chat-input-field" placeholder="Type a message..." required autocomplete="off">
+        <button type="submit" class="btn-send-chat" aria-label="Send Message"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: loveedit-studio:latest
+    container_name: loveedit_web
+    ports:
+      - "9000:9000"
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=loveedit_studio_development_key
+      - REDIS_URL=redis://redis:6379/0
+      - DB_NAME=loveedit.db
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: loveedit_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

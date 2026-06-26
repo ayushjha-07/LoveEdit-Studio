@@ -1,0 +1,681 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard - LoveEdit Studio{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="studio-container user-dashboard-container">
+        
+        <!-- Sidebar Navigation Tab Selectors -->
+        <div class="studio-sidebar dashboard-sidebar glass-panel">
+            <div class="user-profile-summary">
+                <div class="user-avatar-placeholder">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <h4>{{ session.get('username') }}</h4>
+                    <span class="user-plan-badge {{ user.subscription_plan|lower }}">
+                        <i class="fas fa-crown"></i> {{ user.subscription_plan }} Member
+                    </span>
+                </div>
+            </div>
+            
+            <ul class="dashboard-menu">
+                <li class="menu-item active" data-tab="overview">
+                    <i class="fas fa-columns"></i> <span>Overview</span>
+                </li>
+                <li class="menu-item" data-tab="creations">
+                    <i class="fas fa-magic"></i> <span>My Creations</span>
+                </li>
+                <li class="menu-item" data-tab="subscription">
+                    <i class="fas fa-credit-card"></i> <span>Subscriptions</span>
+                </li>
+                <li class="menu-item" data-tab="styles">
+                    <i class="fas fa-star"></i> <span>Saved Styles</span>
+                </li>
+                <li class="menu-item" data-tab="backdrops">
+                    <i class="fas fa-images"></i> <span>Backdrop Library</span>
+                </li>
+                <li class="menu-item" data-tab="activity">
+                    <i class="fas fa-history"></i> <span>Activity Log</span>
+                </li>
+                <li class="menu-item" data-tab="settings">
+                    <i class="fas fa-sliders-h"></i> <span>Account Settings</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Main Panel Contents -->
+        <div class="studio-editor dashboard-content-panel">
+            
+            <!-- TAB 1: OVERVIEW PANEL -->
+            <div class="tab-panel active" id="tab-overview">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-columns" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Customer Dashboard</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Welcome back, {{ session.get('username') }}. Manage your generations, background assets, and billing settings here.</p>
+                </div>
+                
+                <!-- Metric Summary Grid -->
+                <div class="metrics-dashboard-grid">
+                    <div class="metric-card glass-panel">
+                        <div class="metric-icon"><i class="fas fa-image"></i></div>
+                        <div class="metric-data">
+                            <h3>{{ projects|length }}</h3>
+                            <span>Creations Generated</span>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel">
+                        <div class="metric-icon"><i class="fas fa-crown" style="color: var(--gold-primary);"></i></div>
+                        <div class="metric-data">
+                            <h3>{{ user.subscription_plan }}</h3>
+                            <span>Subscription Tier</span>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel">
+                        <div class="metric-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <div class="metric-data">
+                            <h3>{{ custom_bgs|length }}</h3>
+                            <span>Backdrops Saved</span>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel">
+                        <div class="metric-icon"><i class="fas fa-download"></i></div>
+                        <div class="metric-data">
+                            <h3>{{ downloads|length }}</h3>
+                            <span>High-Res Exports</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <!-- Activity Logs -->
+                    <div class="glass-panel" style="padding: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-light); margin: 0;">
+                                <i class="fas fa-history" style="color: var(--gold-primary); margin-right: 0.25rem;"></i> Recent Account Actions
+                            </h4>
+                            <button type="button" class="btn-text btn-switch-tab" data-target="activity" style="font-size: 0.75rem; color: var(--gold-primary); cursor: pointer; background: none; border: none; text-decoration: underline; padding: 0;">View All</button>
+                        </div>
+                        {% if activity %}
+                            <div class="activity-timeline">
+                                {% for act in activity %}
+                                    <div class="activity-log-item">
+                                        <div class="activity-bullet"></div>
+                                        <div class="activity-log-info">
+                                            <p>{{ act.action }}</p>
+                                            <span style="font-size: 0.7rem; color: var(--text-muted);"><i class="far fa-clock"></i> {{ act.created_at }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: var(--text-muted); font-size: 0.85rem; padding: 1.5rem 0; text-align: center;">No activity recorded yet.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Quick Tips Card -->
+                    <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.75rem;">
+                                <i class="fas fa-lightbulb" style="color: var(--gold-primary); margin-right: 0.25rem;"></i> Pro AI Rendering Tips
+                            </h4>
+                            <ul style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; padding-left: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <li>Ensure face photos have clear, front-facing lighting.</li>
+                                <li>Avoid high angles or obscured portraits (glasses, masks).</li>
+                                <li>Upload custom backdrops in **3:2 aspect ratio** for optimal landscape layout composition.</li>
+                                <li>Save style presets as favorites to select them instantly in the studio.</li>
+                            </ul>
+                        </div>
+                        <a href="{{ url_for('dashboard') }}" class="btn-premium" style="justify-content: center; margin-top: 1.5rem;">Open Love Studio <i class="fas fa-magic"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 2: MY CREATIONS PANEL -->
+            <div class="tab-panel" id="tab-creations">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-magic" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> My Creations</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Redownload, upscale, or delete your styled couple composites.</p>
+                </div>
+                
+                {% if projects %}
+                    <div class="gallery-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;">
+                        {% for project in projects %}
+                            <div class="gallery-card glass-panel" data-id="{{ project.id }}">
+                                <div class="gallery-img-container" style="aspect-ratio: 4/5;">
+                                    {% if project.status == 'completed' %}
+                                        <img class="gallery-img" src="{{ url_for('static', filename='uploads/' + project.generated_img) }}" alt="{{ project.name }}" loading="lazy">
+                                    {% else %}
+                                        <div style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#111; color:var(--text-muted);">
+                                            <i class="fas fa-spinner fa-spin" style="color:var(--gold-primary); font-size:2rem; margin-bottom:0.5rem;"></i>
+                                            <span style="font-size:0.8rem;">Processing...</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="gallery-card-info">
+                                        <div class="gallery-card-text">
+                                            <span class="gallery-title" style="font-size: 0.9rem;">{{ project.name }}</span>
+                                            <span class="gallery-style" style="font-size: 0.7rem;">{{ project.style }}</span>
+                                            <span class="gallery-date" style="font-size: 0.65rem;"><i class="far fa-calendar-alt"></i> {{ project.created_at }}</span>
+                                        </div>
+                                        <div class="gallery-actions">
+                                            {% if project.status == 'completed' %}
+                                                <a href="{{ url_for('download_project_from_gallery', project_id=project.id) }}" class="btn-icon" title="Download HD"><i class="fas fa-download"></i></a>
+                                            {% endif %}
+                                            <button class="btn-icon btn-delete-project" data-id="{{ project.id }}" style="background: rgba(220, 53, 69, 0.1);" title="Delete Project"><i class="fas fa-trash-alt" style="color:#ff8585;"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="premium-empty-state" style="margin: 0 auto;">
+                        <div class="empty-icon-wrapper">
+                            <i class="fas fa-heart-broken"></i>
+                        </div>
+                        <h4>No Masterpieces Generated</h4>
+                        <p>Your creation history is currently empty. Head to the studio to render your first couple artwork.</p>
+                        
+                        <div class="onboarding-hints">
+                            <div class="hint-item">
+                                <i class="fas fa-camera"></i>
+                                <span><strong>Upload:</strong> Provide photos with clear and front-facing studio lighting.</span>
+                            </div>
+                            <div class="hint-item">
+                                <i class="fas fa-image"></i>
+                                <span><strong>Backdrop:</strong> Replace backgrounds with our presets or upload custom vaults.</span>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ url_for('dashboard') }}" class="btn-premium">Open Love Studio <i class="fas fa-magic"></i></a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- TAB 3: SUBSCRIPTIONS & BILLING PANEL -->
+            <div class="tab-panel" id="tab-subscription">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-credit-card" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Subscription & Billing</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">View details of your active plan, upgrade tiers, and track billing logs.</p>
+                </div>
+                
+                <!-- Current Subscription Status -->
+                <div class="glass-panel billing-current-plan-card" style="padding: 1.5rem; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Current Active Tier</span>
+                            <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">
+                                <i class="fas fa-crown" style="color: var(--gold-primary); margin-right: 0.25rem;"></i> LoveEdit <span id="current-tier-display">{{ user.subscription_plan }}</span>
+                            </h3>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                Status: <strong style="color: #4caf50;">{{ user.subscription_status }}</strong> | 
+                                Renewal Date: <strong id="renewal-date-display" style="color: var(--gold-glow);">{{ user.subscription_renews if user.subscription_renews else 'Never (Free Tier)' }}</strong>
+                            </p>
+                        </div>
+                        <span class="user-plan-badge {{ user.subscription_plan|lower }}" style="font-size: 1rem; padding: 0.6rem 1rem;">
+                            {{ user.subscription_plan }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Plan Upgrades Grid -->
+                <h4 style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 1rem; font-weight: 600;">Upgrade or Modify Membership</h4>
+                <div class="subscription-upgrade-grid">
+                    <!-- Basic Tier -->
+                    <div class="upgrade-plan-card glass-panel {% if user.subscription_plan == 'Basic' %}active{% endif %}">
+                        <h5>Basic Free</h5>
+                        <div class="upgrade-price">$0 <span>/ month</span></div>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check"></i> Standard Rendering</li>
+                            <li><i class="fas fa-check"></i> HD Downscaling</li>
+                            <li><i class="fas fa-times"></i> 4K UHD Upscaling</li>
+                            <li><i class="fas fa-times"></i> Studio Backdrop Vault</li>
+                            <li><i class="fas fa-times"></i> No Watermarks</li>
+                        </ul>
+                        <button type="button" class="btn-upgrade btn-outline" data-plan="Basic" {% if user.subscription_plan == 'Basic' %}disabled{% endif %}>
+                            {% if user.subscription_plan == 'Basic' %}Current Active{% else %}Downgrade to Free{% endif %}
+                        </button>
+                    </div>
+                    
+                    <!-- Premium Tier -->
+                    <div class="upgrade-plan-card glass-panel {% if user.subscription_plan == 'Premium' %}active{% endif %}">
+                        <h5>Premium Pro</h5>
+                        <div class="upgrade-price">$9 <span>/ month</span></div>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check"></i> Priority Rendering</li>
+                            <li><i class="fas fa-check"></i> 4K UHD Upscaling</li>
+                            <li><i class="fas fa-check"></i> Save Favorite Styles</li>
+                            <li><i class="fas fa-times"></i> Custom Backdrop Vault</li>
+                            <li><i class="fas fa-check"></i> No Watermarks</li>
+                        </ul>
+                        <button type="button" class="btn-upgrade btn-premium" data-plan="Premium" {% if user.subscription_plan == 'Premium' %}disabled{% endif %}>
+                            {% if user.subscription_plan == 'Premium' %}Current Active{% else %}Upgrade to Pro{% endif %}
+                        </button>
+                    </div>
+                    
+                    <!-- VIP Tier -->
+                    <div class="upgrade-plan-card glass-panel {% if user.subscription_plan == 'VIP' %}active{% endif %}">
+                        <div class="popular-card-tag"><i class="fas fa-star"></i> BEST VALUE</div>
+                        <h5>VIP Imperial</h5>
+                        <div class="upgrade-price">$29 <span>/ month</span></div>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check"></i> Max Priority Render</li>
+                            <li><i class="fas fa-check"></i> Unlimited 4K Upscale</li>
+                            <li><i class="fas fa-check"></i> Save Favorite Styles</li>
+                            <li><i class="fas fa-check"></i> Custom Backdrop Vault</li>
+                            <li><i class="fas fa-check"></i> Premium Personal Support</li>
+                        </ul>
+                        <button type="button" class="btn-upgrade btn-premium" data-plan="VIP" {% if user.subscription_plan == 'VIP' %}disabled{% endif %} style="background: var(--gold-gradient); color:#000;">
+                            {% if user.subscription_plan == 'VIP' %}Current Active{% else %}Claim VIP Access{% endif %}
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Billing Transactions Log -->
+                <h4 style="font-size: 1.1rem; color: var(--text-light); margin-top: 3rem; margin-bottom: 1rem; font-weight: 600;">Billing & Transaction Invoices</h4>
+                <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+                    {% if transactions %}
+                        <table class="download-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Plan Tier</th>
+                                    <th>Amount Charged</th>
+                                    <th>Billing Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tx in transactions %}
+                                    <tr>
+                                        <td>#TXN-{{ tx.id + 10000 }}</td>
+                                        <td><span style="color: var(--gold-glow); font-size: 0.85rem; text-transform: uppercase;">{{ tx.plan_tier }}</span></td>
+                                        <td><strong>${{ "%.2f"|format(tx.amount) }}</strong></td>
+                                        <td><i class="far fa-clock"></i> {{ tx.billing_date }}</td>
+                                        <td><span class="status-badge-paid"><i class="fas fa-check-circle"></i> Paid</span></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="premium-empty-state" style="border: none; background: transparent; padding: 2.5rem 1.5rem; max-width: 100%; margin: 0 auto;">
+                            <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                                <i class="fas fa-receipt" style="font-size: 1.3rem;"></i>
+                            </div>
+                            <h4>No Payment Transactions</h4>
+                            <p style="font-size: 0.85rem; max-width: 380px; margin-bottom: 1rem; margin-left: auto; margin-right: auto;">You are currently on the free basic membership tier. Upgrade to Premium or VIP to unlock high-resolution exports and track your invoices here.</p>
+                            <button type="button" class="btn-premium btn-switch-tab" data-target="subscription" style="font-size: 0.75rem; padding: 0.5rem 1rem;">View Upgrade Options <i class="fas fa-crown"></i></button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- TAB 4: SAVED STYLES PANEL -->
+            <div class="tab-panel" id="tab-styles">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-star" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Saved Style Presets</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Toggle your favorite creative presets or launch them instantly inside the studio.</p>
+                </div>
+                
+                <!-- Styles Grid -->
+                <div class="fav-styles-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;">
+                    {% for style in styles %}
+                        {% set is_fav = style.id in fav_styles %}
+                        <div class="fav-style-card glass-panel {% if is_fav %}favorited{% endif %}" data-style-id="{{ style.id }}" style="display: {% if is_fav %}flex{% else %}none{% endif %}; flex-direction: column; overflow: hidden; border-radius: 12px; position: relative;">
+                            <img src="{{ url_for('static', filename='images/' + style.thumbnail) }}" alt="{{ style.name }}" style="width: 100%; height: 130px; object-fit: cover;">
+                            <button class="btn-toggle-favorite-dashboard" data-id="{{ style.id }}" title="Remove from favorites" style="position: absolute; top: 10px; right: 10px; border: none; background: rgba(0,0,0,0.6); color: var(--gold-primary); width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 0.8rem; z-index: 5;">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <div style="padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; gap: 0.75rem;">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                                        <h5 style="font-size: 0.9rem; font-weight: 600; color: #fff; margin: 0;">{{ style.name }}</h5>
+                                        <span class="badge" style="font-size: 0.55rem; background: rgba(212,175,55,0.1); color: var(--gold-primary); padding: 0.05rem 0.25rem; border-radius: 4px;">{{ style.category }}</span>
+                                    </div>
+                                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.3;">{{ style.description }}</p>
+                                </div>
+                                <a href="{{ url_for('dashboard') }}?style={{ style.id }}" class="btn-premium" style="font-size: 0.75rem; padding: 0.4rem 0.6rem; justify-content: center;">Use in Studio <i class="fas fa-magic"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div id="no-fav-styles-msg" class="premium-empty-state" style="display: {% if fav_styles|length == 0 %}flex{% else %}none{% endif %}; grid-column: 1 / -1; margin: 0 auto;">
+                        <div class="empty-icon-wrapper">
+                            <i class="far fa-star"></i>
+                        </div>
+                        <h4>No Saved Style Presets</h4>
+                        <p>You haven't added any style presets to your favorites list yet. Saving presets helps you access them instantly.</p>
+                        
+                        <div class="onboarding-hints">
+                            <div class="hint-item">
+                                <i class="fas fa-info-circle"></i>
+                                <span>To save styles, open the <strong>Love Studio</strong> page, hover over a style card, and click the star icon in the top right.</span>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ url_for('dashboard') }}" class="btn-outline" style="font-size: 0.8rem;">Browse Studio Styles</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 5: BACKDROP LIBRARY PANEL -->
+            <div class="tab-panel" id="tab-backdrops">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-images" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Backdrop Vault Library</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Upload custom scene backdrops to your profile to overlay behind your couple segments inside the studio.</p>
+                </div>
+                
+                {% if user.subscription_plan == 'Basic' %}
+                    <!-- Lock screen for free tier -->
+                    <div class="glass-panel" style="padding: 4rem; text-align: center; border-color: rgba(212, 175, 55, 0.15);">
+                        <i class="fas fa-lock" style="font-size: 3rem; color: var(--gold-primary); margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));"></i>
+                        <h3>Backdrop Vault Locked</h3>
+                        <p style="color: var(--text-muted); max-width: 450px; margin: 0.5rem auto 2rem;">Saving custom backgrounds persistently to your personal library is a premium asset-vault feature. Upgrade to Premium/VIP to unlock.</p>
+                        <button type="button" class="btn-premium btn-switch-tab" data-target="subscription">Upgrade Now <i class="fas fa-crown"></i></button>
+                    </div>
+                {% else %}
+                    <!-- Backdrop Uploader Area -->
+                    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.75rem;">Upload New Custom Backdrop</h4>
+                        <div class="upload-card" id="backdrop-library-uploader" style="aspect-ratio: auto; min-height: 100px; padding: 1.5rem; border-style: dashed; flex-direction: column; gap: 0.5rem;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--gold-primary);"></i>
+                            <span class="upload-title" style="font-size: 0.9rem;">Drag & drop backdrop image or click to select</span>
+                            <span class="upload-desc" style="font-size: 0.7rem; color: var(--text-muted);">Max file size: 5MB. Formats: JPG, PNG, WEBP.</span>
+                            <input type="file" id="backdrop-file-input" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Backdrop Assets Grid -->
+                    <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-light); margin-bottom: 1rem;">Your Saved Backdrops</h4>
+                    <div class="backdrop-library-grid" id="backdrop-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 1.25rem;">
+                        {% for bg in custom_bgs %}
+                            <div class="backdrop-asset-card glass-panel" data-id="{{ bg.id }}" style="aspect-ratio: 1/1; position: relative; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                                <img src="{{ url_for('static', filename='uploads/' + bg.filename) }}" alt="{{ bg.original_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div class="backdrop-card-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 0.4rem; font-size: 0.6rem; color: var(--text-muted); text-align: center; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                                    {{ bg.original_name }}
+                                </div>
+                                <button class="btn-delete-backdrop" data-id="{{ bg.id }}" title="Delete backdrop" style="position: absolute; top: 6px; right: 6px; border: none; background: rgba(10,10,10,0.8); color: #ff8585; width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.08);">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                        
+                        <div id="no-backdrops-msg" class="premium-empty-state" style="display: {% if custom_bgs|length == 0 %}flex{% else %}none{% endif %}; grid-column: 1 / -1; margin: 0 auto; width: 100%;">
+                            <div class="empty-icon-wrapper">
+                                <i class="far fa-images"></i>
+                            </div>
+                            <h4>Your Backdrop Vault is Empty</h4>
+                            <p>Upload your own custom scenic backgrounds (e.g. sunsets, cityscapes, beaches) to overlay behind couple profiles in the studio.</p>
+                            
+                            <div class="onboarding-hints">
+                                <div class="hint-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Drag and drop an image file into the uploader zone above to save it to your personal vault library.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- TAB 6: ACTIVITY LOG PANEL -->
+            <div class="tab-panel" id="tab-activity">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-history" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Activity Log</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Trace your account events, photo uploads, image generations, and billing changes.</p>
+                </div>
+
+                <!-- Timeline Filters -->
+                <div class="timeline-filters glass-panel" style="border-radius: 12px;">
+                    <div class="timeline-search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="activity-search-input" class="form-input timeline-search-input" placeholder="Search activities by description or IP...">
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Category:</span>
+                        <select id="activity-category-filter" class="form-input" style="background: rgba(15,13,11,0.95); color: #fff; border: 1px solid rgba(212,175,55,0.35); padding: 0.5rem 1.5rem 0.5rem 0.75rem; font-size: 0.8rem; cursor: pointer; border-radius: 6px;">
+                            <option value="all">All Activities</option>
+                            <option value="upload">Uploads</option>
+                            <option value="generation">Generations</option>
+                            <option value="download">Downloads</option>
+                            <option value="subscription">Subscriptions</option>
+                            <option value="account">Account Events</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Timeline Container -->
+                <div class="activity-timeline-container" id="activity-timeline-list">
+                    {% if activity %}
+                        {% for act in activity %}
+                            {% set category = 'account' %}
+                            {% set icon = 'fa-cog' %}
+                            {% set color = 'var(--text-muted)' %}
+                            
+                            {% if 'Upload' in act.action %}
+                                {% set category = 'upload' %}
+                                {% set icon = 'fa-cloud-upload-alt' %}
+                                {% set color = '#4caf50' %}
+                            {% elif 'Generation' in act.action or 'Render' in act.action %}
+                                {% set category = 'generation' %}
+                                {% set icon = 'fa-wand-magic-sparkles' %}
+                                {% set color = 'var(--gold-primary)' %}
+                            {% elif 'Exported' in act.action or 'Download' in act.action or 'Project Deleted' in act.action %}
+                                {% set category = 'download' %}
+                                {% set icon = 'fa-download' %}
+                                {% set color = '#2196f3' %}
+                            {% elif 'subscription' in act.action or 'Upgraded' in act.action or 'Downgrade' in act.action or 'Billing' in act.action %}
+                                {% set category = 'subscription' %}
+                                {% set icon = 'fa-crown' %}
+                                {% set color = '#e91e63' %}
+                            {% elif 'Registered' in act.action or 'Logged' in act.action or 'Password' in act.action or 'Email' in act.action or 'Theme' in act.action %}
+                                {% set category = 'account' %}
+                                {% set icon = 'fa-user-shield' %}
+                                {% set color = '#9c27b0' %}
+                            {% endif %}
+                            
+                            <div class="timeline-item-card glass-panel" data-category="{{ category }}" data-search-text="{{ act.action|lower }} {{ act.details|lower }} {{ act.ip_address if act.ip_address else '' }}" style="margin-bottom: 1.25rem; display: flex; gap: 1.25rem; padding: 1.25rem; position: relative; border-radius: 12px; align-items: flex-start;">
+                                <!-- Icon container -->
+                                <div class="timeline-icon-box" style="width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; color: {{ color }}; box-shadow: 0 0 15px rgba(0,0,0,0.25);">
+                                    <i class="fas {{ icon }}" style="font-size: 1.1rem;"></i>
+                                </div>
+                                
+                                <div class="timeline-item-content" style="flex-grow: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem;">
+                                        <h5 style="font-size: 0.9rem; font-weight: 600; color: #fff; margin: 0;">{{ act.action }}</h5>
+                                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;"><i class="far fa-clock"></i> {{ act.created_at }}</span>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.45;">{{ act.details }}</p>
+                                    {% if act.ip_address %}
+                                        <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 0.5rem; opacity: 0.6;"><i class="fas fa-network-wired"></i> IP: {{ act.ip_address }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="premium-empty-state" style="padding: 3rem 1.5rem; margin: 0 auto; max-width: 100%;">
+                            <div class="empty-icon-wrapper">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h4>No Activity Yet</h4>
+                            <p>All your workspace actions and system notifications will be tracked here.</p>
+                        </div>
+                    {% endif %}
+                    
+                    <div id="no-activities-found" class="premium-empty-state" style="display: none; padding: 3rem 1.5rem; margin: 0 auto; max-width: 100%;">
+                        <div class="empty-icon-wrapper" style="width: 50px; height: 50px;">
+                            <i class="fas fa-search" style="font-size: 1.3rem;"></i>
+                        </div>
+                        <h4>No matching actions found</h4>
+                        <p style="font-size: 0.85rem; max-width: 380px;">Adjust your search keyword or selected category filter to view other entries.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB 7: ACCOUNT SETTINGS PANEL -->
+            <div class="tab-panel" id="tab-settings">
+                <div class="glass-panel panel-header" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h2 class="panel-main-title"><i class="fas fa-sliders-h" style="color: var(--gold-primary); margin-right: 0.5rem;"></i> Account Settings</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Manage your login credentials, profile email, security controls, and design theme preference.</p>
+                </div>
+                
+                <form id="settings-profile-form" class="glass-panel" style="padding: 2rem;">
+                    <h4 style="font-size: 1rem; color: var(--text-light); margin-bottom: 1.5rem; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Profile & Theme Preferences</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group-upgraded">
+                            <label class="form-label">Username (Permanent)</label>
+                            <input type="text" class="form-input" value="{{ session.get('username') }}" disabled style="background: rgba(255,255,255,0.02); color: var(--text-muted); cursor: not-allowed; width: 100%;">
+                        </div>
+                        <div class="form-group-upgraded">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="settings-email" name="email" class="form-input" value="{{ user.email if user.email else '' }}" required style="width: 100%;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group-upgraded" style="margin-bottom: 1.5rem;">
+                        <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Dashboard Theme Preference</label>
+                        <div class="theme-picker-options" style="display: flex; gap: 1rem;">
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: var(--text-light);">
+                                <input type="radio" name="theme_preference" value="dark" {% if user.theme_preference == 'dark' or not user.theme_preference %}checked{% endif %} style="accent-color: var(--gold-primary);">
+                                <span>Onyx Dark Mode</span>
+                            </label>
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: var(--text-light);">
+                                <input type="radio" name="theme_preference" value="light" {% if user.theme_preference == 'light' %}checked{% endif %} style="accent-color: var(--gold-primary);">
+                                <span>Alabaster Light Mode</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <h4 style="font-size: 1rem; color: var(--text-light); margin-top: 3rem; margin-bottom: 1.5rem; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Security & Password</h4>
+                    
+                    <div class="form-group-upgraded" style="margin-bottom: 1.25rem;">
+                        <label class="form-label">Current Password (Required for changes)</label>
+                        <input type="password" id="settings-old-password" name="old_password" class="form-input" placeholder="••••••••" style="width: 100%;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group-upgraded">
+                            <label class="form-label">New Password</label>
+                            <input type="password" id="settings-new-password" name="new_password" class="form-input" placeholder="Min 6 characters" style="width: 100%;">
+                        </div>
+                        <div class="form-group-upgraded">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" id="settings-confirm-password" name="confirm_password" class="form-input" placeholder="Re-type new password" style="width: 100%;">
+                        </div>
+                    </div>
+                    
+                    <!-- Password Strength Gauge -->
+                    <div id="password-strength-container" style="display: none; margin-bottom: 1.5rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">New Password Strength</span>
+                        <div class="password-gauge-bar" style="background: rgba(255, 255, 255, 0.05); height: 4px; border-radius: 2px; overflow: hidden; margin-bottom: 0.25rem;">
+                            <div id="password-gauge-fill" style="width: 0%; height: 100%; transition: width 0.3s ease-out; border-radius: 2px;"></div>
+                        </div>
+                        <span id="password-gauge-label" style="font-size: 0.7rem; font-weight: 600;">Weak</span>
+                    </div>
+                    
+                    <button type="submit" class="btn-premium" style="justify-content: center; padding: 0.8rem 2rem;">Save Account Settings <i class="fas fa-save"></i></button>
+                </form>
+            </div>
+            
+        </div>
+        
+    </div>
+</div>
+
+<!-- Upgrading Simulated Checkout Payment Modal -->
+<div class="ai-modal" id="checkout-payment-modal" style="display: none;">
+    <div class="ai-modal-content glass-panel" style="max-width: 440px; text-align: left; align-items: stretch; padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+            <h4 style="font-size: 1.15rem; font-weight: 600; color: #fff; margin: 0;"><i class="fas fa-shield-alt" style="color:var(--gold-primary); margin-right: 0.25rem;"></i> Secure Upgrade</h4>
+            <button type="button" class="btn-close-checkout" style="background:none; border:none; color: var(--text-muted); cursor:pointer; font-size: 1.15rem;"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div style="background: rgba(229,193,88,0.03); border: 1px solid rgba(229,193,88,0.15); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                <span>Upgrading to:</span>
+                <strong style="color: #fff;" id="checkout-plan-name">Premium Pro</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.5rem;">
+                <span style="color: var(--text-light);">Monthly Price:</span>
+                <span style="color: var(--gold-primary);" id="checkout-plan-price">$9.00 / mo</span>
+            </div>
+        </div>
+        
+        <form id="checkout-simulated-form">
+            <input type="hidden" id="checkout-plan-tier" name="plan_tier" value="Premium">
+            
+            <!-- Payment Method Tabs -->
+            <div class="payment-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+                <button type="button" class="payment-tab-btn active" id="pay-card-btn" style="flex: 1; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--gold-primary); background: rgba(229,193,88,0.1); color: var(--gold-primary); cursor: pointer; transition: all 0.2s;">
+                    <i class="far fa-credit-card" style="margin-right: 0.25rem;"></i> Card
+                </button>
+                <button type="button" class="payment-tab-btn" id="pay-upi-btn" style="flex: 1; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border-color); background: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-qrcode" style="margin-right: 0.25rem;"></i> UPI QR
+                </button>
+            </div>
+            
+            <!-- Global Form Error Alert for payment declines -->
+            <div id="checkout-error-alert" class="glass-panel" style="display: none; background: rgba(244, 67, 54, 0.08); border-color: rgba(244, 67, 54, 0.3); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; align-items: center; gap: 0.75rem; color: #ff8585; font-size: 0.85rem;">
+                <i class="fas fa-exclamation-circle" style="color: #f44336; font-size: 1.1rem; flex-shrink: 0;"></i>
+                <span id="checkout-error-text" style="line-height: 1.4;"></span>
+            </div>
+            
+            <!-- Card Fields -->
+            <div id="card-payment-fields">
+                <div class="form-group-upgraded" style="margin-bottom: 1rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">Cardholder Name</label>
+                    <input type="text" id="checkout-cardholder" name="cardholder_name" class="form-input" value="{{ session.get('username') }}" required style="width: 100%; padding: 0.5rem;">
+                    <span class="invalid-feedback" id="checkout-cardholder-error" style="color: #ff8585; font-size: 0.75rem; margin-top: 0.25rem; display: none;"></span>
+                </div>
+                
+                <div class="form-group-upgraded" style="margin-bottom: 1rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">Credit Card Number</label>
+                    <div style="position: relative;">
+                        <input type="text" id="checkout-cardnumber" name="card_number" class="form-input" placeholder="4111 2222 3333 4444" required style="width: 100%; padding: 0.5rem; padding-left: 2rem;">
+                        <i class="far fa-credit-card" style="position: absolute; left: 8px; top: 11px; color: var(--text-muted); font-size: 0.85rem;"></i>
+                    </div>
+                    <span class="invalid-feedback" id="checkout-cardnumber-error" style="color: #ff8585; font-size: 0.75rem; margin-top: 0.25rem; display: none;"></span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="form-group-upgraded">
+                        <label class="form-label" style="font-size: 0.75rem;">Expiry Date</label>
+                        <input type="text" id="checkout-expiry" name="expiry_date" class="form-input" placeholder="MM / YY" required style="width: 100%; padding: 0.5rem; text-align: center;">
+                        <span class="invalid-feedback" id="checkout-expiry-error" style="color: #ff8585; font-size: 0.75rem; margin-top: 0.25rem; display: none;"></span>
+                    </div>
+                    <div class="form-group-upgraded">
+                        <label class="form-label" style="font-size: 0.75rem;">CVC / CVV</label>
+                        <input type="text" id="checkout-cvc" name="cvc" class="form-input" placeholder="123" required style="width: 100%; padding: 0.5rem; text-align: center;">
+                        <span class="invalid-feedback" id="checkout-cvc-error" style="color: #ff8585; font-size: 0.75rem; margin-top: 0.25rem; display: none;"></span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 0.9rem;">
+                    Authorize Payment & Activate <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+            <!-- UPI QR Fields -->
+            <div id="upi-payment-fields" style="display: none; flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; padding: 0.5rem 0;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Scan the QR code below with Google Pay, PhonePe, Paytm, or any UPI app to transfer the amount.</p>
+                <div style="background: #fff; padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); display: inline-block;">
+                    <img src="/static/images/upi_qr.jpg" alt="UPI Payment QR Code" style="width: 160px; height: 160px; display: block; object-fit: contain;" />
+                </div>
+                <div style="font-size: 0.8rem;">
+                    <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; tracking-wider: 0.05em;">UPI ID</div>
+                    <div style="color: var(--gold-primary); font-weight: 600; font-family: monospace; font-size: 0.85rem; margin-top: 0.15rem; select-all: true;">jhaayushkumar18@okhdfcbank</div>
+                </div>
+                <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; padding: 0.9rem;">
+                    I Have Paid & Activate <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/user_dashboard.js') }}"></script>
+{% endblock %}
